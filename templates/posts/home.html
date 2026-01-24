@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tuwetter | Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% load static %}
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-black text-white">
+
+    <!-- TOPBAR MOBILE -->
+    <header class="md:hidden flex items-center justify-between px-4 py-3 border-b border-white/10">
+        <button onclick="toggleMenu()" class="text-2xl">☰</button>
+        <span class="font-bold text-lg">Tuwetter</span>
+    </header>
+
+    <div class="max-w-6xl mx-auto flex min-h-screen">
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar"
+            class="fixed md:static top-0 left-0 h-full w-64 bg-black px-4 py-6
+                   transform -translate-x-full md:translate-x-0
+                   transition-transform duration-300 z-50">
+
+            <div class="mb-8">
+
+                <!-- TÍTULO DESKTOP -->
+                <div class="hidden md:block mb-4">
+                    <h1 class="text-xl font-bold">Tuwetter</h1>
+                </div>
+
+                <!-- USUÁRIO -->
+                <div class="flex items-center gap-3">
+                    <img src="{% static 'avatars/' %}{{ user.profile.avatar }}"
+                         class="w-12 h-12 rounded-full object-cover">
+
+                    <div class="flex items-center gap-1">
+                        <p class="font-bold">{{ user.username }}</p>
+
+                        {% if user.username == "danndev" %}
+                        <img src="{% static 'images/celo.png' %}"
+                             alt="Desenvolvedor"
+                             class="w-4 h-4">
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <nav class="space-y-2">
+                <a href="{% url 'home' %}" onclick="toggleMenu()"
+                   class="block px-4 py-2 rounded-full bg-white/10 font-semibold">
+                    Home
+                </a>
+
+                <button onclick="openLogoutModal()"
+                    class="w-full text-left px-4 py-2 rounded-full text-red-400 hover:bg-red-500/10">
+                    Sair
+                </button>
+            </nav>
+        </aside>
+
+        <!-- FEED -->
+        <main class="flex-1 border-x border-white/10">
+
+            <!-- COMPOSER -->
+            <form method="post" class="p-4 border-b border-white/10">
+                {% csrf_token %}
+
+                <div class="flex gap-3">
+                    <img src="{% static 'avatars/' %}{{ user.profile.avatar }}"
+                         class="w-12 h-12 rounded-full object-cover">
+
+                    <div class="flex-1">
+                        <!-- NOME + SELO -->
+                        <div class="flex items-center gap-1 font-bold leading-tight">
+                            {{ user.username }}
+
+                            {% if user.username == "danndev" %}
+                            <img src="{% static 'images/celo.png' %}"
+                                 alt="Desenvolvedor"
+                                 class="w-4 h-4">
+                            {% endif %}
+                        </div>
+
+                        <textarea name="content"
+                            placeholder="O que está acontecendo?"
+                            rows="3"
+                            maxlength="250"
+                            required
+                            class="w-full bg-black resize-none outline-none
+                                   text-lg placeholder-gray-500 leading-relaxed mt-2"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-3 pl-14">
+                    <span id="charCount" class="text-sm text-gray-500">0 / 250</span>
+
+                    <button type="submit"
+                        class="bg-blue-500 hover:bg-blue-600 transition
+                               px-6 py-2 rounded-full font-bold">
+                        Postar
+                    </button>
+                </div>
+            </form>
+
+            <!-- POSTS -->
+            {% for post in posts %}
+            <article class="p-4 border-b border-white/10 hover:bg-white/5 transition">
+
+                <div class="flex items-center gap-3 mb-1">
+                    <img src="{% static 'avatars/' %}{{ post.author.profile.avatar }}"
+                         class="w-10 h-10 rounded-full object-cover">
+
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-1">
+                            <span class="font-bold leading-none">
+                                {{ post.author.username }}
+                            </span>
+
+                            {% if post.author.username == "danndev" %}
+                            <img src="{% static 'images/celo.png' %}"
+                                 alt="Desenvolvedor"
+                                 class="w-3.5 h-3.5">
+                            {% endif %}
+                        </div>
+
+                        <span class="text-sm text-gray-400">
+                            @{{ post.author.username }}
+                        </span>
+                    </div>
+                </div>
+
+                <p class="mt-2 mb-3 text-[15px] leading-relaxed whitespace-pre-line">
+                    {{ post.content }}
+                </p>
+
+                <div class="flex gap-4 text-sm text-gray-400">
+                    <form action="{% url 'toggle_like' post.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="flex items-center gap-1 hover:text-pink-500 transition">
+                            ❤️ {{ post.like_set.count }}
+                        </button>
+                    </form>
+
+                    {% if post.author == user %}
+                    <form action="{% url 'delete_post' post.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="flex items-center gap-1 text-red-500 hover:text-red-600 transition">
+                            🗑️ Deletar
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </article>
+            {% empty %}
+            <p class="p-4 text-gray-400">Nenhum post ainda.</p>
+            {% endfor %}
+        </main>
+    </div>
+
+    <!-- MODAL LOGOUT -->
+    <div id="logoutModal"
+         class="fixed inset-0 bg-black/70 hidden flex items-center justify-center px-4 z-50">
+
+        <div class="bg-zinc-900 rounded-2xl w-full max-w-sm p-6 text-center shadow-xl">
+            <h2 class="text-lg font-bold mb-2">Tem certeza que deseja sair?</h2>
+            <p class="text-sm text-gray-400 mb-6">
+                Você pode entrar novamente a qualquer momento.
+            </p>
+
+            <div class="flex flex-col gap-3">
+                <a href="{% url 'logout' %}"
+                   class="w-full text-center bg-red-500 hover:bg-red-600 transition
+                          py-3 rounded-full font-bold">
+                    Sair
+                </a>
+
+                <button onclick="closeLogoutModal()"
+                        class="w-full py-3 rounded-full border border-white/20
+                               hover:bg-white/10 transition">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            window.openLogoutModal = () =>
+                document.getElementById('logoutModal')?.classList.remove('hidden');
+
+            window.closeLogoutModal = () =>
+                document.getElementById('logoutModal')?.classList.add('hidden');
+
+            window.toggleMenu = () => {
+                const sidebar = document.getElementById('sidebar');
+                sidebar?.classList.toggle('-translate-x-full');
+            };
+
+            const textarea = document.querySelector('textarea[name="content"]');
+            const counter = document.getElementById('charCount');
+
+            if (textarea && counter) {
+                textarea.addEventListener('input', () => {
+                    counter.textContent = `${textarea.value.length} / 250`;
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

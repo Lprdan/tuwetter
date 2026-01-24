@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Tuwetter | Registro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% load static %}
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-black text-white min-h-screen flex items-center justify-center">
+
+<div class="w-full max-w-sm px-6">
+
+    <!-- TÍTULO -->
+    <h1 class="text-3xl font-bold mb-6 text-center">
+        Criar conta
+    </h1>
+
+    <!-- ERROS DO FORM -->
+    {% if form.errors %}
+    <div class="mb-4 text-red-500 text-sm">
+        <ul class="list-disc list-inside">
+            {% for field in form %}
+                {% for error in field.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- FORM REGISTRO -->
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+
+        <input type="text" name="username" required
+               placeholder="Usuário"
+               class="w-full bg-black border border-white/20
+                      rounded-md px-4 py-3
+                      focus:outline-none focus:border-blue-500">
+
+        <input type="email" name="email" required
+               placeholder="Email"
+               class="w-full bg-black border border-white/20
+                      rounded-md px-4 py-3
+                      focus:outline-none focus:border-blue-500">
+
+        <input type="password" name="password1" required
+               placeholder="Senha"
+               class="w-full bg-black border border-white/20
+                      rounded-md px-4 py-3
+                      focus:outline-none focus:border-blue-500">
+
+        <input type="password" name="password2" required
+               placeholder="Confirmar senha"
+               class="w-full bg-black border border-white/20
+                      rounded-md px-4 py-3
+                      focus:outline-none focus:border-blue-500">
+
+        <button type="submit"
+                class="w-full bg-blue-500 hover:bg-blue-600 transition
+                       py-3 rounded-full font-bold">
+            Criar conta
+        </button>
+    </form>
+
+    <!-- LINK LOGIN -->
+    <p class="text-center text-gray-400 mt-6 text-sm">
+        Já tem uma conta?
+        <a href="{% url 'login' %}" class="text-blue-500 hover:underline">
+            Entrar
+        </a>
+    </p>
+
+</div>
+
+</body>
+</html>
