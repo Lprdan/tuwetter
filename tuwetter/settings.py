@@ -96,7 +96,7 @@ USE_L10N = True
 
 
 # Static files
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_DIRS = [
@@ -111,3 +111,10 @@ LOGOUT_REDIRECT_URL = '/'
 if os.environ.get('RENDER') is not None:
     DEBUG = False
     ALLOWED_HOSTS.append('.onrender.com')
+    
+    # Servir arquivos estáticos em produção
+    STATIC_URL = '/static/'
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    
+    # Whitenoise para servir arquivos estáticos
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
