@@ -20,10 +20,10 @@
 
     <!-- MENSAGENS DE ERRO -->
     {% if messages %}
-    <div class="mb-4">
+    <div class="mb-4 bg-red-500/10 border border-red-500 rounded-lg p-4">
         {% for message in messages %}
-        <p class="text-red-500 text-sm text-center">
-            {{ message }}
+        <p class="text-red-400 text-sm">
+            ❌ {{ message }}
         </p>
         {% endfor %}
     </div>
@@ -39,11 +39,18 @@
                       rounded-md px-4 py-3
                       focus:outline-none focus:border-blue-500">
 
-        <input type="password" name="password" required
-               placeholder="Senha"
-               class="w-full bg-black border border-white/20
-                      rounded-md px-4 py-3
-                      focus:outline-none focus:border-blue-500">
+        <!-- SENHA COM BOTÃO MOSTRAR -->
+        <div class="relative">
+            <input type="password" name="password" id="password" required
+                   placeholder="Senha"
+                   class="w-full bg-black border border-white/20
+                          rounded-md px-4 py-3
+                          focus:outline-none focus:border-blue-500 pr-12">
+            <button type="button" onclick="togglePassword('password')"
+                    class="absolute right-3 top-3 text-xl text-gray-400 hover:text-white">
+                👁️
+            </button>
+        </div>
 
         <button type="submit"
                 class="w-full bg-blue-500 hover:bg-blue-600 transition
@@ -61,6 +68,14 @@
     </p>
 
 </div>
+
+<script>
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const type = field.type === 'password' ? 'text' : 'password';
+        field.type = type;
+    }
+</script>
 
 </body>
 </html>

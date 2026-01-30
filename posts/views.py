@@ -40,3 +40,12 @@ def toggle_like(request, post_id):
         Like.objects.create(user=request.user, post=post)
 
     return redirect('home')
+
+
+@login_required
+def notifications(request):
+    # Busca todos os likes nos posts do usuário logado
+    user_posts = Post.objects.filter(author=request.user)
+    likes = Like.objects.filter(post__in=user_posts).select_related('user', 'post').order_by('-id')
+    
+    return render(request, 'posts/notifications.html', {'likes': likes})

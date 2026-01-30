@@ -8,6 +8,9 @@
 
     {% load static %}
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body class="bg-black text-white">
@@ -21,11 +24,9 @@
     <div class="max-w-6xl mx-auto flex min-h-screen">
 
         <!-- SIDEBAR -->
-        <aside id="sidebar"
-            class="fixed md:static top-0 left-0 h-full w-64 bg-black px-4 py-6
+        <aside id="sidebar" class="fixed md:static top-0 left-0 h-full w-64 bg-black px-4 py-6
                    transform -translate-x-full md:translate-x-0
-                   transition-transform duration-300 z-50">
-
+                   transition-transform duration-300 z-50 border-r border-white/10">
             <div class="mb-8">
 
                 <!-- TÍTULO DESKTOP -->
@@ -36,29 +37,39 @@
                 <!-- USUÁRIO -->
                 <div class="flex items-center gap-3">
                     <img src="{% static 'avatars/' %}{{ user.profile.avatar }}"
-                         class="w-12 h-12 rounded-full object-cover">
+                        class="w-12 h-12 rounded-full object-cover">
 
                     <div class="flex items-center gap-1">
                         <p class="font-bold">{{ user.username }}</p>
 
                         {% if user.username == "danndev" %}
-                        <img src="{% static 'images/celo.png' %}"
-                             alt="Desenvolvedor"
-                             class="w-4 h-4">
+                        <img src="{% static 'images/celo.png' %}" alt="Desenvolvedor" class="w-4 h-4">
                         {% endif %}
                     </div>
                 </div>
             </div>
 
             <nav class="space-y-2">
+
+                <!-- HOME -->
                 <a href="{% url 'home' %}" onclick="toggleMenu()"
-                   class="block px-4 py-2 rounded-full bg-white/10 font-semibold">
-                    Home
+                    class="flex items-center gap-3 px-4 py-3 rounded-full bg-white/10 font-semibold hover:bg-white/20 transition">
+                    <i class="fas fa-home text-xl"></i>
+                    <span>Home</span>
                 </a>
 
+                <!-- NOTIFICAÇÕES -->
+                <a href="{% url 'notifications' %}" onclick="toggleMenu()"
+                    class="flex items-center gap-3 px-4 py-3 rounded-full hover:bg-white/10 transition">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span>Notificações</span>
+                </a>
+
+                <!-- SAIR -->
                 <button onclick="openLogoutModal()"
-                    class="w-full text-left px-4 py-2 rounded-full text-red-400 hover:bg-red-500/10">
-                    Sair
+                    class="w-full flex items-center gap-3 px-4 py-3 rounded-full text-red-400 hover:bg-red-500/10 transition">
+                    <i class="fas fa-sign-out-alt text-xl"></i>
+                    <span>Sair</span>
                 </button>
             </nav>
         </aside>
@@ -72,25 +83,20 @@
 
                 <div class="flex gap-3">
                     <img src="{% static 'avatars/' %}{{ user.profile.avatar }}"
-                         class="w-12 h-12 rounded-full object-cover">
+                        class="w-12 h-12 rounded-full object-cover">
 
                     <div class="flex-1">
+
                         <!-- NOME + SELO -->
                         <div class="flex items-center gap-1 font-bold leading-tight">
                             {{ user.username }}
 
                             {% if user.username == "danndev" %}
-                            <img src="{% static 'images/celo.png' %}"
-                                 alt="Desenvolvedor"
-                                 class="w-4 h-4">
+                            <img src="{% static 'images/celo.png' %}" alt="Desenvolvedor" class="w-4 h-4">
                             {% endif %}
                         </div>
 
-                        <textarea name="content"
-                            placeholder="O que está acontecendo?"
-                            rows="3"
-                            maxlength="250"
-                            required
+                        <textarea name="content" placeholder="O que está acontecendo?" rows="3" maxlength="250" required
                             class="w-full bg-black resize-none outline-none
                                    text-lg placeholder-gray-500 leading-relaxed mt-2"></textarea>
                     </div>
@@ -99,8 +105,7 @@
                 <div class="flex justify-between items-center mt-3 pl-14">
                     <span id="charCount" class="text-sm text-gray-500">0 / 250</span>
 
-                    <button type="submit"
-                        class="bg-blue-500 hover:bg-blue-600 transition
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 transition
                                px-6 py-2 rounded-full font-bold">
                         Postar
                     </button>
@@ -113,7 +118,7 @@
 
                 <div class="flex items-center gap-3 mb-1">
                     <img src="{% static 'avatars/' %}{{ post.author.profile.avatar }}"
-                         class="w-10 h-10 rounded-full object-cover">
+                        class="w-10 h-10 rounded-full object-cover">
 
                     <div class="flex flex-col">
                         <div class="flex items-center gap-1">
@@ -122,9 +127,7 @@
                             </span>
 
                             {% if post.author.username == "danndev" %}
-                            <img src="{% static 'images/celo.png' %}"
-                                 alt="Desenvolvedor"
-                                 class="w-3.5 h-3.5">
+                            <img src="{% static 'images/celo.png' %}" alt="Desenvolvedor" class="w-3.5 h-3.5">
                             {% endif %}
                         </div>
 
@@ -139,22 +142,23 @@
                 </p>
 
                 <div class="flex gap-4 text-sm text-gray-400">
-                    <form action="{% url 'toggle_like' post.id %}" method="post">
+
+                    <!-- BOTÃO CURTIR -->
+                    <form action="{% url 'toggle_like' post.id %}" method="post" class="inline">
                         {% csrf_token %}
-                        <button type="submit"
-                            class="flex items-center gap-1 hover:text-pink-500 transition">
-                            ❤️ {{ post.like_set.count }}
+                        <button type="submit" class="flex items-center gap-2 hover:text-pink-500 transition">
+                            <i class="fas fa-heart"></i>
+                            {{ post.like_set.count }}
                         </button>
                     </form>
 
+                    <!-- BOTÃO DELETAR -->
                     {% if post.author == user %}
-                    <form action="{% url 'delete_post' post.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit"
-                            class="flex items-center gap-1 text-red-500 hover:text-red-600 transition">
-                            🗑️ Deletar
-                        </button>
-                    </form>
+                    <button onclick="openDeleteModal('{{ post.id }}')"
+                        class="flex items-center gap-2 text-red-500 hover:text-red-600 transition">
+                        <i class="fas fa-trash"></i>
+                        Deletar
+                    </button>
                     {% endif %}
                 </div>
             </article>
@@ -165,9 +169,7 @@
     </div>
 
     <!-- MODAL LOGOUT -->
-    <div id="logoutModal"
-         class="fixed inset-0 bg-black/70 hidden flex items-center justify-center px-4 z-50">
-
+    <div id="logoutModal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center px-4 z-50">
         <div class="bg-zinc-900 rounded-2xl w-full max-w-sm p-6 text-center shadow-xl">
             <h2 class="text-lg font-bold mb-2">Tem certeza que deseja sair?</h2>
             <p class="text-sm text-gray-400 mb-6">
@@ -175,15 +177,38 @@
             </p>
 
             <div class="flex flex-col gap-3">
-                <a href="{% url 'logout' %}"
-                   class="w-full text-center bg-red-500 hover:bg-red-600 transition
-                          py-3 rounded-full font-bold">
+                <a href="{% url 'logout' %}" class="w-full text-center bg-red-500 hover:bg-red-600 transition
+                           py-3 rounded-full font-bold">
                     Sair
                 </a>
 
-                <button onclick="closeLogoutModal()"
-                        class="w-full py-3 rounded-full border border-white/20
-                               hover:bg-white/10 transition">
+                <button onclick="closeLogoutModal()" class="w-full py-3 rounded-full border border-white/20
+                           hover:bg-white/10 transition">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DELETE POST -->
+    <div id="deleteModal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center px-4 z-50">
+        <div class="bg-zinc-900 rounded-2xl w-full max-w-sm p-6 text-center shadow-xl">
+            <h2 class="text-lg font-bold mb-2">Deletar post?</h2>
+            <p class="text-sm text-gray-400 mb-6">
+                Esta ação não poderá ser desfeita.
+            </p>
+
+            <div class="flex flex-col gap-3">
+                <form id="deleteForm" method="post" class="w-full">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full bg-red-500 hover:bg-red-600 transition
+                               py-3 rounded-full font-bold">
+                        Deletar
+                    </button>
+                </form>
+
+                <button onclick="closeDeleteModal()" class="w-full py-3 rounded-full border border-white/20
+                           hover:bg-white/10 transition">
                     Cancelar
                 </button>
             </div>
@@ -198,6 +223,15 @@
 
             window.closeLogoutModal = () =>
                 document.getElementById('logoutModal')?.classList.add('hidden');
+
+            window.openDeleteModal = (postId) => {
+                const form = document.getElementById('deleteForm');
+                form.action = `/delete/${postId}/`;
+                document.getElementById('deleteModal')?.classList.remove('hidden');
+            };
+
+            window.closeDeleteModal = () =>
+                document.getElementById('deleteModal')?.classList.add('hidden');
 
             window.toggleMenu = () => {
                 const sidebar = document.getElementById('sidebar');
@@ -216,4 +250,5 @@
     </script>
 
 </body>
+
 </html>

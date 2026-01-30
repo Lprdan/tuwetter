@@ -18,13 +18,14 @@
         Criar conta
     </h1>
 
-    <!-- ERROS DO FORM -->
+    <!-- CARD DE ERROS -->
     {% if form.errors %}
-    <div class="mb-4 text-red-500 text-sm">
-        <ul class="list-disc list-inside">
+    <div class="mb-4 bg-red-500/10 border border-red-500 rounded-lg p-4">
+        <p class="text-red-400 font-semibold mb-2 text-sm"> Erro ao registrar:</p>
+        <ul class="space-y-1">
             {% for field in form %}
                 {% for error in field.errors %}
-                <li>{{ error }}</li>
+                <li class="text-red-300 text-sm">• {{ error }}</li>
                 {% endfor %}
             {% endfor %}
         </ul>
@@ -47,17 +48,31 @@
                       rounded-md px-4 py-3
                       focus:outline-none focus:border-blue-500">
 
-        <input type="password" name="password1" required
-               placeholder="Senha"
-               class="w-full bg-black border border-white/20
-                      rounded-md px-4 py-3
-                      focus:outline-none focus:border-blue-500">
+        <!-- SENHA COM BOTÃO MOSTRAR -->
+        <div class="relative">
+            <input type="password" name="password1" id="password1" required
+                   placeholder="Senha"
+                   class="w-full bg-black border border-white/20
+                          rounded-md px-4 py-3
+                          focus:outline-none focus:border-blue-500 pr-12">
+            <button type="button" onclick="togglePassword('password1')"
+                    class="absolute right-3 top-3 text-xl text-gray-400 hover:text-white">
+                👁️
+            </button>
+        </div>
 
-        <input type="password" name="password2" required
-               placeholder="Confirmar senha"
-               class="w-full bg-black border border-white/20
-                      rounded-md px-4 py-3
-                      focus:outline-none focus:border-blue-500">
+        <!-- CONFIRMAR SENHA COM BOTÃO MOSTRAR -->
+        <div class="relative">
+            <input type="password" name="password2" id="password2" required
+                   placeholder="Confirmar senha"
+                   class="w-full bg-black border border-white/20
+                          rounded-md px-4 py-3
+                          focus:outline-none focus:border-blue-500 pr-12">
+            <button type="button" onclick="togglePassword('password2')"
+                    class="absolute right-3 top-3 text-xl text-gray-400 hover:text-white">
+                👁️
+            </button>
+        </div>
 
         <button type="submit"
                 class="w-full bg-blue-500 hover:bg-blue-600 transition
@@ -75,6 +90,14 @@
     </p>
 
 </div>
+
+<script>
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const type = field.type === 'password' ? 'text' : 'password';
+        field.type = type;
+    }
+</script>
 
 </body>
 </html>

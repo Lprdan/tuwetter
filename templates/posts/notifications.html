@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tuwetter | Notificações</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% load static %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-black text-white">
+
+    <!-- TOPBAR MOBILE -->
+    <header class="md:hidden flex items-center justify-between px-4 py-3 border-b border-white/10">
+        <a href="{% url 'home' %}" class="text-2xl">←</a>
+        <span class="font-bold text-lg">Notificações</span>
+        <div></div>
+    </header>
+
+    <div class="max-w-6xl mx-auto flex min-h-screen">
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar"
+            class="fixed md:static top-0 left-0 h-full w-64 bg-black px-4 py-6
+                   transform -translate-x-full md:translate-x-0
+                   transition-transform duration-300 z-50 border-r border-white/10">
+
+            <div class="mb-8">
+
+                <!-- TÍTULO DESKTOP -->
+                <div class="hidden md:block mb-4">
+                    <h1 class="text-xl font-bold">Tuwetter</h1>
+                </div>
+
+                <!-- USUÁRIO -->
+                <div class="flex items-center gap-3">
+                    <img src="{% static 'avatars/' %}{{ user.profile.avatar }}"
+                         class="w-12 h-12 rounded-full object-cover">
+
+                    <div class="flex items-center gap-1">
+                        <p class="font-bold">{{ user.username }}</p>
+
+                        {% if user.username == "danndev" %}
+                        <img src="{% static 'images/celo.png' %}"
+                             alt="Desenvolvedor"
+                             class="w-4 h-4">
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <nav class="space-y-2">
+                <!-- HOME -->
+                <a href="{% url 'home' %}" onclick="toggleMenu()"
+                   class="flex items-center gap-3 px-4 py-3 rounded-full hover:bg-white/10 transition">
+                    <i class="fas fa-home text-xl"></i>
+                    <span>Home</span>
+                </a>
+
+                <!-- NOTIFICAÇÕES (ATIVA) -->
+                <a href="{% url 'notifications' %}" onclick="toggleMenu()"
+                   class="flex items-center gap-3 px-4 py-3 rounded-full bg-white/10 font-semibold hover:bg-white/20 transition">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span>Notificações</span>
+                </a>
+
+                <!-- SAIR -->
+                <button onclick="openLogoutModal()"
+                    class="w-full flex items-center gap-3 px-4 py-3 rounded-full text-red-400 hover:bg-red-500/10 transition">
+                    <i class="fas fa-sign-out-alt text-xl"></i>
+                    <span>Sair</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- FEED -->
+        <main class="flex-1 border-x border-white/10">
+
+            <!-- HEADER -->
+            <div class="hidden md:block p-4 border-b border-white/10">
+                <h2 class="text-xl font-bold">Notificações</h2>
+            </div>
+
+            <!-- NOTIFICAÇÕES -->
+            {% if likes %}
+                {% for like in likes %}
+                <article class="p-4 border-b border-white/10 hover:bg-white/5 transition">
+
+                    <div class="flex items-center gap-3">
+                        <!-- AVATAR -->
+                        <img src="{% static 'avatars/' %}{{ like.user.profile.avatar }}"
+                             class="w-12 h-12 rounded-full object-cover flex-shrink-0">
+
+                        <!-- CONTEÚDO -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-bold">
+                                    {{ like.user.username }}
+                                </span>
+
+                                {% if like.user.username == "danndev" %}
+                                <img src="{% static 'images/celo.png' %}"
+                                     alt="Desenvolvedor"
+                                     class="w-3.5 h-3.5">
+                                {% endif %}
+
+                                <span class="text-gray-400">
+                                    curtiu seu post
+                                </span>
+
+                                <i class="fas fa-heart text-red-500 ml-1"></i>
+                            </div>
+
+                            <!-- PREVIEW DO POST -->
+                            <p class="text-sm text-gray-400 mt-2 line-clamp-2">
+                                {{ like.post.content }}
+                            </p>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            {% else %}
+                <div class="p-8 text-center text-gray-400">
+                    <i class="fas fa-bell-slash text-4xl mb-3 block opacity-50"></i>
+                    <p class="text-lg">Nenhuma notificação ainda</p>
+                    <p class="text-sm mt-2">Quando alguém curtir seu post, aparecerá aqui</p>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <!-- MODAL LOGOUT -->
+    <div id="logoutModal"
+         class="fixed inset-0 bg-black/70 hidden flex items-center justify-center px-4 z-50">
+
+        <div class="bg-zinc-900 rounded-2xl w-full max-w-sm p-6 text-center shadow-xl">
+            <h2 class="text-lg font-bold mb-2">Tem certeza que deseja sair?</h2>
+            <p class="text-sm text-gray-400 mb-6">
+                Você pode entrar novamente a qualquer momento.
+            </p>
+
+            <div class="flex flex-col gap-3">
+                <a href="{% url 'logout' %}"
+                   class="w-full text-center bg-red-500 hover:bg-red-600 transition
+                          py-3 rounded-full font-bold">
+                    Sair
+                </a>
+
+                <button onclick="closeLogoutModal()"
+                        class="w-full py-3 rounded-full border border-white/20
+                               hover:bg-white/10 transition">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            window.openLogoutModal = () =>
+                document.getElementById('logoutModal')?.classList.remove('hidden');
+
+            window.closeLogoutModal = () =>
+                document.getElementById('logoutModal')?.classList.add('hidden');
+
+            window.toggleMenu = () => {
+                const sidebar = document.getElementById('sidebar');
+                sidebar?.classList.toggle('-translate-x-full');
+            };
+        });
+    </script>
+
+</body>
+</html>
